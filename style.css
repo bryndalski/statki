@@ -3,7 +3,7 @@ body {
     padding: 0;
     overflow: auto;
     display: flex;
-    background-image: url('./kozak\ background.png'); 
+    background-image: url('./img/kozak\ background.png'); 
     /* background-size: 100% 100%; */
 }
 /* dodaj mniejszy ekranik */

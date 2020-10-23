@@ -8,7 +8,7 @@ var tablica_trafien = [], poziom = 5 //ustawiam na 5 bo nigdy nie będzie 5)
 var kod = ''
 var tablica_trafien_pc_OPAI = [], tablica_pozyji_statku = []
 // window.onload = setInterval(() => {
-//     var audio = new Audio('Sonar ping.mp3');
+//     var audio = new Audio('./audio/Sonar ping.mp3');
 //     audio.volume = 0.03;
 //     audio.onload = function () {
 //         console.log("DZIAŁA AUDIO ")
@@ -1696,7 +1696,7 @@ function submit() {
         kod = ''
         document.querySelector('.code_container').remove()
         var imagio = document.createElement('img')
-        imagio.src = './crying_cat.jpg';
+        imagio.src = './img/crying_cat.jpg';
         document.body.appendChild(imagio)
         var meme = new Audio('crtmh.mp3');
         meme.volume = 0.03;
