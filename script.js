@@ -251,6 +251,7 @@ function selected_ship_switcher() {
         }
     } else {
         alert("Coś się zepsuło nie było mnie słychać ")
+        przypadek = 0;
         if (tablica_ruchoma.length != 0) {
             for (i = 0; i < tablica_ruchoma.length; i++) {
                 document.querySelector('#gamer_container div:nth-child(' + (tablica_ruchoma[i]) + ')').style.background = "none"
