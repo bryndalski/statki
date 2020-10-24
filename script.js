@@ -1230,12 +1230,12 @@ function display_ships() {
 //skrypt pokazujący 
 function show_ships() {
     for (i = 0; i < 100; i++) {
-        if (tablica_gry_KOMPUTER[i] == false) {
+        if (tablica_gry_KOMPUTER[i] == false || tablica_gry_KOMPUTER[i] == 'trafiony') {
             selector = '#gamer_container_pc div:nth-child(' + (i + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
             document.querySelector(selector).style.background = "#2CFA1F";
-        } else if (tablica_gry_KOMPUTER[i] == 'shot ' || tablica_gry_KOMPUTER[i] == 'trafiony ') {
-            selector = '#gamer_container_pc div:nth-child(' + (i + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-            document.querySelector(selector).style.background = "#fdff00";
+        } else {
+            selector = '#gamer_container_pc div:nth-child(' + (i + 1) + ')'
+            document.querySelector(selector).style.background = "none";
         }
     }
 }
