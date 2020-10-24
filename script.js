@@ -19,6 +19,7 @@ window.addEventListener('DOMContentLoaded', restartor_creator) // ładuje przy �
 function restartor_creator() {
     tablica_trafien = []
     tablica_gry_PLAYER = [], tablica_gry_KOMPUTER = [], przypadek = 0, tablica_ruchoma = [], moge_czy_nie = false, tablica_uzytych = [], klikniety = 10
+
     window.addEventListener('contextmenu', (e) => {                      //  
         e.preventDefault();                                             //  Wyłączam domyślne context menu
     }, false)                                                           //  ^
@@ -564,10 +565,10 @@ function game_player_bord_creator(id_containera, tablica_uzytkowa) { //sprawdź 
 // funkcje RYSOWANIA STATKÓW WYWAL OPCJE Z RYSOWANIEM TODO 
 //TODO PRZED ODDANIEM ODKOMENTUJ
 function rysownik(tablica, plansza, wspolrzedne) {
-    // if (plansza != 'gamer_container_pc') {
-    wspolrzedne++;
-    document.querySelector('#' + plansza + ' ' + 'div:nth-child(' + wspolrzedne + ')').style.background = "#2cfa1f"
-    // }
+    if (plansza != 'gamer_container_pc') {
+        wspolrzedne++;
+        document.querySelector('#' + plansza + ' ' + 'div:nth-child(' + wspolrzedne + ')').style.background = "#2cfa1f"
+    }
 }
 // NAJWAŻNIEJSZE PRZY DEBUGU WYWAL RYSOWANIE NIEBIESKICH BORDERÓW - rysuje i tworzy granice wokół statków 
 //FUNCKJA ZMIENIANA 
@@ -996,17 +997,6 @@ function endgame() {
     button_start.id = "START"
     document.getElementById('button_section').appendChild(button_start)
     button_start.addEventListener('click', leavel, button_start)
-    // document.getElementById('button_section').removeChild(button_start)
-    // document.getElementById('gamer_container_pc').addEventListener('click', player, button_start)
-    // //button pokazujący statki 
-    var button_show = document.createElement("button")
-    button_show.id = "SHOW"
-    button_show.appendChild(document.createTextNode("POKAŻ"))
-    document.getElementById('button_section').appendChild(button_show)
-    button_show.addEventListener('click', display_ships)
-    // })
-
-
 }
 function leavel() {
     document.getElementById('START').removeEventListener('click', leavel)
@@ -1116,7 +1106,8 @@ function player_algoritm(clicked) {
             document.querySelector(selector).style.background = "red";
             tablica_gry_KOMPUTER[clicked] = 'trafiony'
             console.log(tablica_gry_KOMPUTER[clicked])
-            document.getElementById('gamer_container_pc').addEventListener('click', player)
+            if (sprawdzacz_wygranej())
+                document.getElementById('gamer_container_pc').addEventListener('click', player)
 
         }
         else if (tablica_gry_KOMPUTER[clicked] == 'shot' || tablica_gry_KOMPUTER[clicked] == 'trafiony') {
@@ -1130,14 +1121,17 @@ function player_algoritm(clicked) {
             switch (poziom) {
                 case 0:     //łatwy
                     console.log("siemka tu przypadek ŁATWY")
-                    setTimeout(player_computer_idiot, 1000)
+                    if (sprawdzacz_wygranej())
+                        setTimeout(player_computer_idiot, 1000)
                     break;
                 case 1:
-                    setTimeout(IA_try_medium, 1000);
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
                     break;
                 case 2:
                     console.log("zaczynam kozaczy")
-                    setTimeout(IA_TRY_BOOSTED, 1000);
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_TRY_BOOSTED, 1000);
                     break;
             }
         }
@@ -1154,7 +1148,9 @@ function player_computer_idiot() {
             selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
             document.querySelector(selector).style.background = "red";
             tablica_gry_PLAYER[headshot - 1] = 'trafiony'
-            setTimeout(player_computer_idiot, 1000)
+            if (sprawdzacz_wygranej()) {
+                setTimeout(player_computer_idiot, 1000)
+            }
         }
         else if (tablica_gry_PLAYER[headshot - 1] == 'shot' || tablica_gry_PLAYER[headshot - 1] == 'trafiony') {
             player_computer_idiot();
@@ -1188,18 +1184,51 @@ function sprawdzacz_wygranej() {
         }
     }
     if (sprawdzam) {
-        alert("WYGRAŁ Komputer")
-
+        document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px #003B91";
+        var alert_container = document.createElement('div')
+        alert_container.classList.add('alert_container_class')
+        document.body.appendChild(alert_container)
+        //tworze tekst 
+        var tytul_napis = document.createElement('h1')
+        tytul_napis.appendChild(document.createTextNode("PORAŻKA"))
+        alert_container.appendChild(tytul_napis)
+        var cansel_button = document.createElement('button')
+        cansel_button.appendChild(document.createTextNode("OK"))
+        cansel_button.classList.add('chanel_button')
+        alert_container.appendChild(cansel_button);
+        cansel_button.addEventListener('click', () => {
+            document.getElementById('SHOW').addEventListener('click', display_ships)
+            alert_container.remove()    //piękny selfdistruct 
+        })
     }
     if (sprawdzam_gracza) {
-        alert("Wygrał Gracz")
-
+        document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px #003B91";
+        var alert_container = document.createElement('div')
+        alert_container.classList.add('alert_container_class')
+        document.body.appendChild(alert_container)
+        //tworze tekst 
+        var tytul_napis = document.createElement('h1')
+        tytul_napis.appendChild(document.createTextNode("WYGRANA"))
+        alert_container.appendChild(tytul_napis)
+        var cansel_button = document.createElement('button')
+        cansel_button.appendChild(document.createTextNode("OK"))
+        cansel_button.classList.add('chanel_button')
+        alert_container.appendChild(cansel_button);
+        cansel_button.addEventListener('click', () => {
+            document.getElementById('SHOW').addEventListener('click', display_ships)
+            alert_container.remove()    //piękny selfdistruct 
+        })
     }
     if (!sprawdzam && !sprawdzam_gracza) {
         console.log("nikt nie wygrał")
         return true
     } else {
         console.log("game over")
+        var button_show = document.createElement("button")
+        button_show.id = "SHOW"
+        button_show.appendChild(document.createTextNode("POKAŻ"))
+        document.getElementById('button_section').appendChild(button_show)
+        button_show.addEventListener('click', display_ships)
         return false;
     }
 }
@@ -1221,10 +1250,6 @@ function display_ships() {
     var tytul_napis = document.createElement('h1')
     tytul_napis.appendChild(document.createTextNode("Czy chcesz pokazać statki"))
     alert_container.appendChild(tytul_napis)
-    //tworze podtytuł
-    var podtytuł = document.createElement('h3')
-    podtytuł.appendChild(document.createTextNode("Uwaga spowoduje to twoją przegraną"))
-    alert_container.appendChild(podtytuł)
     //tworze_buttony
     var show_button = document.createElement('button')
     show_button.appendChild(document.createTextNode("POKAŻ PLANSZE"))
@@ -1248,13 +1273,6 @@ function display_ships() {
         document.getElementById('SHOW').addEventListener('click', display_ships)
         alert_container.remove()    //piękny selfdistruct 
     })
-    console.log("siema")
-    document.body.addEventListener('clik', () => {
-        console.log("HELLOFESIF{EIFH")  //TODO napraw
-        alert_container.remove()    //piękny selfdistruct 
-        window.removeEventListener('click', arguments.callee, false);
-
-    })
 }
 //skrypt pokazujący 
 function show_ships() {
@@ -1275,148 +1293,158 @@ function show_ships() {
 //2-prawo
 //3-lewo
 function IA_try_medium() {
-    console.log("IA MEDIOUM")
-    console.log(tablica_trafien)
-    console.log("Piłeczka u kompa")
-    if (tablica_trafien.length > 1) {
-        console.log(tablica_trafien)
-        console.log("piłeczka u IA")
-        console.log(tablica_gry_PLAYER[tablica_trafien[4][1]])
-        if (tablica_trafien[0][0] != 0) { //IA W GÓRE
-            console.log("jestem tu")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[0][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[0][0]--;    //odejmuje ilość możliwości 
-                tablica_trafien[0][1] += 10;    //dodaje +10 do swagu w góre
-                tablica_trafien[2][0] = 0;  //zeruje boki
-                tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_try_medium, 1000);
-            } else if (tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == true || tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 1")
-                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'shot'
-                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    document.querySelector(selector).style.background = "#0fc0fc";
-                    tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
-                    document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
-                }, 1000);
-            } else {
-                //gdyby jakimś cudem trafił w pole w które już kiedyś strzeał
-                tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
-                setTimeout(IA_try_medium, 1000);
-            }
-        } else if (tablica_trafien[1][0] != 0) {    // IA w dół
-            console.log("2")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[1][0]--;    //zmienjsza możlowość
-                tablica_trafien[1][1] += 10;
-                tablica_trafien[2][0] = 0;
-                tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_try_medium, 1000);
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 2")
-                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'shot'
-                    document.querySelector(selector).style.background = "#0fc0fc";
-                    tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
-                    document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
-
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
-                }, 1000);
-            } else {
-                tablica_trafien[1][0] = 0
-                setTimeout(IA_try_medium, 1000);
-            }
-        } else if (tablica_trafien[2][0] != 0) { //w prawo 
-            console.log("3")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[2][0]--;
-                tablica_trafien[2][1]++;
-                tablica_trafien[0][0] = 0;
-                tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_try_medium, 1000);
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 3")
-                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'shot'
-                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    document.querySelector(selector).style.background = "#0fc0fc";
-                    tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
-                    document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
-
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
-
-                }, 1000);
-            } else {
-                tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
-                setTimeout(IA_try_medium, 1000);
-            }
-
-        } else if (tablica_trafien[3][0] != 0) { //w lewo 
-            console.log("4")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[3][0]--;    //zmniejsza możliwość 
-                tablica_trafien[3][1]++;    //cofam indexy 
-                tablica_trafien[0][0] = 0;
-                tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_try_medium, 1000);
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 4 ")
-                    tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] = 'shot'
-                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    document.querySelector(selector).style.background = "#0fc0fc";
-                    tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
-                    document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
-                }, 1000);
-            } else {
-                tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
-                setTimeout(IA_try_medium, 1000);
-
-            }
-        } else {
-            tablica_trafien = []
-            IA_try_medium()
-        }
-    } else {
-        console.log("Piłeczka losuje ")
-        var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
-        if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
-            selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-            document.querySelector(selector).style.background = "red";
-            tablica_gry_PLAYER[headshot - 1][2] = 'trafiony';
-            wektormaker(headshot)
+    if (sprawdzacz_wygranej()) {
+        if (tablica_trafien.length > 1) {
             console.log(tablica_trafien)
-            setTimeout(IA_try_medium, 1000);
-        } else if (tablica_gry_PLAYER[headshot - 1] == 'shot' || tablica_gry_PLAYER[headshot - 1] == 'trafiony') {
-            console.log("aww sheet here we go again")
-            IA_try_medium()
+            console.log("piłeczka u IA")
+            console.log(tablica_gry_PLAYER[tablica_trafien[4][1]])
+            if (tablica_trafien[0][0] != 0) { //IA W GÓRE
+                console.log("jestem tu")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[0][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'trafiony'
+                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[0][0]--;    //odejmuje ilość możliwości 
+                    tablica_trafien[0][1] += 10;    //dodaje +10 do swagu w góre
+                    tablica_trafien[2][0] = 0;  //zeruje boki
+                    tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                } else if (tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == true || tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == 'protected') {
+                    setTimeout(() => {
+                        console.log("Pudło przypadek 1")
+                        tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'shot'
+                        selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                        document.querySelector(selector).style.background = "blue";
+                        tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
+                        document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                        if (sprawdzacz_wygranej())
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
+                    }, 1000);
+                } else {
+                    //gdyby jakimś cudem trafił w pole w które już kiedyś strzeał
+                    tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                }
+            } else if (tablica_trafien[1][0] != 0) {    // IA w dół
+                console.log("2")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'trafiony'
+                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[1][0]--;    //zmienjsza możlowość
+                    tablica_trafien[1][1] += 10;
+                    tablica_trafien[2][0] = 0;
+                    tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == 'protected') {
+                    setTimeout(() => {
+                        console.log("Pudło przypadek 2")
+                        selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                        tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'shot'
+                        document.querySelector(selector).style.background = "blue";
+                        tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
+                        if (sprawdzacz_wygranej())
+                            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
 
+                        document.getElementById('gamer_container_pc').addEventListener('click', player)
+                    }, 1000);
+                } else {
+                    tablica_trafien[1][0] = 0
+                    setTimeout(IA_try_medium, 1000);
+                }
+            } else if (tablica_trafien[2][0] != 0) { //w prawo 
+                console.log("3")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'trafiony'
+                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[2][0]--;
+                    tablica_trafien[2][1]++;
+                    tablica_trafien[0][0] = 0;
+                    tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == 'protected') {
+                    setTimeout(() => {
+                        console.log("Pudło przypadek 3")
+                        tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'shot'
+                        selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                        document.querySelector(selector).style.background = "blue";
+                        tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
+                        document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                        if (sprawdzacz_wygranej())
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
+
+                    }, 1000);
+                } else {
+                    tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                }
+
+            } else if (tablica_trafien[3][0] != 0) { //w lewo 
+                console.log("4")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'trafiony'
+                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[3][0]--;    //zmniejsza możliwość 
+                    tablica_trafien[3][1]++;    //cofam indexy 
+                    tablica_trafien[0][0] = 0;
+                    tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == 'protected') {
+                    setTimeout(() => {
+                        console.log("Pudło przypadek 4 ")
+                        tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] = 'shot'
+                        selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                        document.querySelector(selector).style.background = "blue";
+                        tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
+                        document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                        if (sprawdzacz_wygranej())
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
+                    }, 1000);
+                } else {
+                    tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_try_medium, 1000);
+
+                }
+            } else {
+                tablica_trafien = []
+                IA_try_medium()
+            }
         } else {
-            selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-            document.querySelector(selector).style.background = "#0fc0fc";
-            tablica_gry_PLAYER[headshot - 1] = 'shot';
-            console.log(tablica_gry_PLAYER[headshot - 1][2])
-            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
-            document.getElementById('gamer_container_pc').addEventListener('click', player)
+            console.log("Piłeczka losuje ")
+            var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
+            if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
+                selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                document.querySelector(selector).style.background = "red";
+                tablica_gry_PLAYER[headshot - 1][2] = 'trafiony';
+                wektormaker(headshot)
+                console.log(tablica_trafien)
+                if (sprawdzacz_wygranej())
+                    setTimeout(IA_try_medium, 1000);
+            } else if (tablica_gry_PLAYER[headshot - 1] == 'shot' || tablica_gry_PLAYER[headshot - 1] == 'trafiony') {
+                console.log("aww sheet here we go again")
+                IA_try_medium()
 
+            } else {
+                selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                document.querySelector(selector).style.background = "blue";
+                tablica_gry_PLAYER[headshot - 1] = 'shot';
+                console.log(tablica_gry_PLAYER[headshot - 1][2])
+                document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                if (sprawdzacz_wygranej())
+                    document.getElementById('gamer_container_pc').addEventListener('click', player)
+
+            }
         }
     }
-    // document.getElementById('gamer_container_pc').addEventListener('click', player)
 }
 function wektormaker(strzal) {
     strzal--;
@@ -1468,177 +1496,201 @@ function wektormaker(strzal) {
 }
 //OP ia staff
 
-//TODO fix me
 function IA_TRY_BOOSTED() {
-    console.log("kocur kodujący liniki piszący ")
-    if (tablica_trafien_pc_OPAI.length == 0) {
-        console.log("no ro wio nowa tablica")
-        for (i = 0; i < 100; i++) {
-            tablica_trafien_pc_OPAI[i] = "shotable"
-        }
-    }
-    if (tablica_trafien.length != 0) {
-        if (tablica_trafien[0][0] != 0) { //IA W GÓRE
-            console.log("jestem tu")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[0][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "red";
-                tablica_pozyji_statku.push(tablica_trafien[4][1] - tablica_trafien[0][1])       //opcje BOOSTED
-                tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'ship' //OPCJE BOOSTED
-                //bloki tablic 
-                tablica_trafien[0][0]--;
-                tablica_trafien[0][1] += 10;
-                tablica_trafien[2][0] = 0;
-                tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_TRY_BOOSTED, 1000);
-            } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] != 'shotable') {
-                tablica_trafien[0][0] = 0;
-                IA_TRY_BOOSTED();
+    if (sprawdzacz_wygranej()) {
+        console.log("kocur kodujący liniki piszący ")
+        if (tablica_trafien_pc_OPAI.length == 0) {
+            console.log("no ro wio nowa tablica")
+            for (i = 0; i < 100; i++) {
+                tablica_trafien_pc_OPAI[i] = "shotable"
             }
-            else if (tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == true || tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 1")
-                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'shot'
+        }
+        if (tablica_trafien.length != 0) {
+            if (tablica_trafien[0][0] != 0) { //IA W GÓRE
+                console.log("jestem tu")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[0][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'trafiony'
                     selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'unshotable'//opcja BOOSTED
-                    document.querySelector(selector).style.background = "#0fc0fc";
-                    tablica_trafien[0][0] = [0]   // blokuje tablice jeszcze raz 
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
-                }, 1000);
-            } else {
-                tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
-                IA_TRY_BOOSTED()
-            }
-        } else if (tablica_trafien[1][0] != 0) {    // IA w dół
-            console.log("2")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-
-                tablica_pozyji_statku.push(tablica_trafien[4][1] + tablica_trafien[1][1])   //bosted opcje 
-                tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'ship' //boosted opcje 
-
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[1][0]--;
-                tablica_trafien[1][1] += 10;
-                tablica_trafien[2][0] = 0;
-                tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                //ustawiam boosted opcje 
-                setTimeout(IA_TRY_BOOSTED, 1000)
-            } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] != 'shotable') {
-                tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
-                setTimeout(IA_TRY_BOOSTED, 1000)
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 2")
+                    document.querySelector(selector).style.background = "red";
+                    tablica_pozyji_statku.push(tablica_trafien[4][1] - tablica_trafien[0][1])       //opcje BOOSTED
+                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'ship' //OPCJE BOOSTED
+                    //bloki tablic 
+                    tablica_trafien[0][0]--;
+                    tablica_trafien[0][1] += 10;
+                    tablica_trafien[2][0] = 0;
+                    tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_TRY_BOOSTED, 1000);
+                } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] != 'shotable') {
+                    tablica_trafien[0][0] = 0;
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED();
+                }
+                else if (tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == true || tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] == 'protected') {
+                    if (sprawdzacz_wygranej())
+                        setTimeout(() => {
+                            console.log("Pudło przypadek 1")
+                            tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'shot'
+                            selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[0][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                            tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[0][1]] = 'unshotable'//opcja BOOSTED
+                            document.querySelector(selector).style.background = "blue";
+                            tablica_trafien[0][0] = [0]   // blokuje tablice jeszcze raz 
+                            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
+                        }, 1000);
+                } else {
+                    tablica_trafien[0][0] = 0   // blokuje tablice jeszcze raz 
+                    IA_TRY_BOOSTED()
+                }
+            } else if (tablica_trafien[1][0] != 0) {    // IA w dół
+                console.log("2")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'trafiony'
                     selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'shot'
-                    document.querySelector(selector).style.background = "#0fc0fc";
+
+                    tablica_pozyji_statku.push(tablica_trafien[4][1] + tablica_trafien[1][1])   //bosted opcje 
+                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'ship' //boosted opcje 
+
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[1][0]--;
+                    tablica_trafien[1][1] += 10;
+                    tablica_trafien[2][0] = 0;
+                    tablica_trafien[3][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    //ustawiam boosted opcje 
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_TRY_BOOSTED, 1000)
+                } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] != 'shotable') {
                     tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
-                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'unshotable'
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
+                    setTimeout(IA_TRY_BOOSTED, 1000)
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[1][1])] == 'protected') {
+                    if (sprawdzacz_wygranej())
+                        setTimeout(() => {
+                            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                            console.log("Pudło przypadek 2")
+                            selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[1][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                            tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'shot'
+                            document.querySelector(selector).style.background = "blue";
+                            tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
+                            tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[1][1]] = 'unshotable'
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
 
-                }, 1000);
+                        }, 1000);
 
-            } else {
-                tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
-                IA_TRY_BOOSTED()
-            }
-        } else if (tablica_trafien[2][0] != 0) {
-            console.log("3")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                tablica_pozyji_statku.push(tablica_trafien[4][1] + tablica_trafien[2][1])   // opcje dodatkoe
-                tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'ship' //opcje boosted
-                document.querySelector(selector).style.background = "red";
-                tablica_trafien[2][0]--;    //
-                tablica_trafien[2][1]++;    //  opcje tablic 
-                tablica_trafien[0][0] = 0;  //
-                tablica_trafien[1][0] = 0   //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_TRY_BOOSTED, 1000);//wywołuje 1 raz
-            } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] != 'shotable') {
-                tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
-                IA_TRY_BOOSTED();
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == 'protected') {
-                setTimeout(() => {
-                    console.log("Pudło przypadek 3")
-                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'shot'
-                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'unshotable'
+                } else {
+                    tablica_trafien[1][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED()
+                }
+            } else if (tablica_trafien[2][0] != 0) {
+                console.log("3")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'trafiony'
                     selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                    document.querySelector(selector).style.background = "#0fc0fc";
+                    tablica_pozyji_statku.push(tablica_trafien[4][1] + tablica_trafien[2][1])   // opcje dodatkoe
+                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'ship' //opcje boosted
+                    document.querySelector(selector).style.background = "red";
+                    tablica_trafien[2][0]--;    //
+                    tablica_trafien[2][1]++;    //  opcje tablic 
+                    tablica_trafien[0][0] = 0;  //
+                    tablica_trafien[1][0] = 0   //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_TRY_BOOSTED, 1000);//wywołuje 1 raz
+                } else if (tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] != 'shotable') {
                     tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
-                    document.getElementById('gamer_container_pc').addEventListener('click', player)
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED();
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] + tablica_trafien[2][1])] == 'protected') {
+                    if (sprawdzacz_wygranej())
+                        setTimeout(() => {
+                            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                            console.log("Pudło przypadek 3")
+                            tablica_gry_PLAYER[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'shot'
+                            tablica_trafien_pc_OPAI[tablica_trafien[4][1] + tablica_trafien[2][1]] = 'unshotable'
+                            selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] + tablica_trafien[2][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                            document.querySelector(selector).style.background = "blue";
+                            tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
 
-                }, 1000)
-            } else {
-                tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
+                        }, 1000)
+                } else {
+                    tablica_trafien[2][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED()
+                }
+
+            } else if (tablica_trafien[3][0] != 0) {
+                console.log("4")
+                if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == false) {
+                    tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'trafiony'
+                    selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                    tablica_pozyji_statku.push(tablica_trafien[4][1] - tablica_trafien[3][1])   // opcje dodatkoe
+                    tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'ship' //opcje boosted
+                    document.querySelector(selector).style.background = "red";  //ustawiam kolor pola
+                    tablica_trafien[3][0]--;    //
+                    tablica_trafien[3][1]++;    //  opcje tablicy
+                    tablica_trafien[0][0] = 0;   //
+                    tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    if (sprawdzacz_wygranej())
+                        setTimeout(IA_TRY_BOOSTED, 1000);
+                } else if (tablica_trafien_pc_OPAI[(tablica_trafien[4][1] - tablica_trafien[3][1])] != 'shotable') {
+                    tablica_trafien[3][0] = 0;    //
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED()
+                } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == 'protected') {
+                    if (sprawdzacz_wygranej())
+
+                        setTimeout(() => {
+                            console.log("Pudło przypadek 4 ")
+                            document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                            tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] = 'shot'
+                            tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'unshotable' // opcja dodatkowa
+                            selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                            document.querySelector(selector).style.background = "blue";
+                            tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
+                            document.getElementById('gamer_container_pc').addEventListener('click', player)
+
+                        }, 1000);
+                } else {
+                    tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
+                    if (sprawdzacz_wygranej())
+                        IA_TRY_BOOSTED()
+                }
+            } else {    // gdy już wszysko wywali pora się pobawić
+                //tworze wektor dla tablicy trafionych
+                make_border_for_secord()
+                tablica_trafien = []
                 IA_TRY_BOOSTED()
             }
-
-        } else if (tablica_trafien[3][0] != 0) {
-            console.log("4")
-            if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == false) {
-                tablica_gry_PLAYER[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'trafiony'
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                tablica_pozyji_statku.push(tablica_trafien[4][1] - tablica_trafien[3][1])   // opcje dodatkoe
-                tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'ship' //opcje boosted
-                document.querySelector(selector).style.background = "red";  //ustawiam kolor pola
-                tablica_trafien[3][0]--;    //
-                tablica_trafien[3][1]++;    //  opcje tablicy
-                tablica_trafien[0][0] = 0;   //
-                tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
-                setTimeout(IA_TRY_BOOSTED, 1000);
-            } else if (tablica_trafien_pc_OPAI[(tablica_trafien[4][1] - tablica_trafien[3][1])] != 'shotable') {
-                tablica_trafien[3][0] = 0;    //
-                IA_TRY_BOOSTED()
-            } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == 'protected') {
-                console.log("Pudło przypadek 4 ")
-                tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] = 'shot'
-                tablica_trafien_pc_OPAI[tablica_trafien[4][1] - tablica_trafien[3][1]] = 'unshotable' // opcja dodatkowa
-                selector = '#gamer_container div:nth-child(' + (tablica_trafien[4][1] - tablica_trafien[3][1] + 1) + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-                document.querySelector(selector).style.background = "#0fc0fc";
-                tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
-                document.getElementById('gamer_container_pc').addEventListener('click', player)
-
-            } else {
-                tablica_trafien[3][0] = 0   // blokuje tablice jeszcze raz 
-                IA_TRY_BOOSTED()
-            }
-        } else {    // gdy już wszysko wywali pora się pobawić
-            //tworze wektor dla tablicy trafionych
-            make_border_for_secord()
-            tablica_trafien = []
-            IA_TRY_BOOSTED()
-        }
-        //wektr staff 
-    } else {    //TODO dodaj opcje tworzenia wektoru w tablicy , odbuguj , sprawdź czy działą itp etc no wiesz co zrobić
-        console.log("Piłeczka losuje ")
-        var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
-        console.log(headshot)
-        console.log(tablica_trafien_pc_OPAI[headshot - 1])
-        if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
-            selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
-            document.querySelector(selector).style.background = "red";
-            tablica_gry_PLAYER[headshot - 1] = 'trafiony';
-            tablica_trafien_pc_OPAI[headshot - 1] = 'ship'
-            wektormaker(headshot)
-            console.log(tablica_trafien)
-            tablica_pozyji_statku.push(headshot - 1)
-            setTimeout(IA_TRY_BOOSTED, 1000)
-        } else if (tablica_gry_PLAYER[headshot - 1] == 'shot' || tablica_gry_PLAYER[headshot - 1] == 'trafiony' || tablica_trafien_pc_OPAI[headshot - 1] != 'shotable') { //jeśli nie pasuje mu pocja z tablucy 2 
-            console.log("aww sheet here we go again")
-            IA_TRY_BOOSTED()
-        } else {
-            selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+            //wektr staff 
+        } else {    //TODO dodaj opcje tworzenia wektoru w tablicy , odbuguj , sprawdź czy działą itp etc no wiesz co zrobić
+            var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
             console.log(headshot)
-            document.querySelector(selector).style.background = "#0fc0fc";
-            tablica_gry_PLAYER[headshot - 1] = 'shot';
-            tablica_trafien_pc_OPAI[headshot - 1] = 'unshotable'
-            console.log(tablica_gry_PLAYER[headshot - 1])
-
-            document.getElementById('gamer_container_pc').addEventListener('click', player)
+            console.log(tablica_trafien_pc_OPAI[headshot - 1])
+            if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
+                selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                document.querySelector(selector).style.background = "red";
+                tablica_gry_PLAYER[headshot - 1] = 'trafiony';
+                tablica_trafien_pc_OPAI[headshot - 1] = 'ship'
+                wektormaker(headshot)
+                console.log(tablica_trafien)
+                tablica_pozyji_statku.push(headshot - 1)
+                if (sprawdzacz_wygranej())
+                    setTimeout(IA_TRY_BOOSTED, 1000)
+            } else if (tablica_gry_PLAYER[headshot - 1] == 'shot' || tablica_gry_PLAYER[headshot - 1] == 'trafiony' || tablica_trafien_pc_OPAI[headshot - 1] != 'shotable') { //jeśli nie pasuje mu pocja z tablucy 2 
+                console.log("aww sheet here we go again")
+                if (sprawdzacz_wygranej())
+                    IA_TRY_BOOSTED()
+            } else {
+                selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
+                console.log(headshot)
+                document.querySelector(selector).style.background = "blue";
+                tablica_gry_PLAYER[headshot - 1] = 'shot';
+                tablica_trafien_pc_OPAI[headshot - 1] = 'unshotable'
+                console.log(tablica_gry_PLAYER[headshot - 1])
+                document.querySelector('#radar_container .screen:nth-child(2)').style.border = "solid 10px green";
+                if (sprawdzacz_wygranej())
+                    document.getElementById('gamer_container_pc').addEventListener('click', player)
+            }
         }
     }
 }
@@ -1670,12 +1722,10 @@ function make_border_for_secord() {
     console.log(tablica_trafien_pc_OPAI)
     tablica_pozyji_statku = []
 }
-
-
-
 //######-EASTER-EGG-###############
 //funkcja odpowiedzialna za tworzenie containera kodu 
 function code_enter() {
+    kod = ''
     console.log("ej")
     //tworzę container
     var container = document.createElement('div')
@@ -1720,27 +1770,25 @@ function klawa_to_screeen(i) {
 }
 //50485048
 function submit() {
-    if (kod == '1') {
+    if (kod == '50485048') {
         kod = ''
         document.querySelector('.code_container').remove()
         var imagio = document.createElement('img')
         imagio.src = './img/crying_cat.jpg';
         document.body.appendChild(imagio)
-        var meme = new Audio('crtmh.mp3');
+        var meme = new Audio('./audio/crtmh.mp3');
         meme.volume = 0.03;
         meme.play()
         setTimeout(() => {
-            // console.log("no dobra coś robie ")
             imagio.remove()
         }, 240000);
 
     } else {
         kod = ''
-        alert("NIE")
+        alert("Kod błędny podany")
         document.querySelector('.code_container').remove()
     }
 }
-
 function remove() {
     document.querySelector('.digit_monit').innerHTML = ''
     kod = ''
