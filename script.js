@@ -1333,7 +1333,7 @@ function IA_try_medium() {
                     tablica_trafien[3][0]--;    //zmniejsza możliwość 
                     tablica_trafien[3][1]++;    //cofam indexy 
                     tablica_trafien[0][0] = 0;
-                    tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na boki ponieważ nie można już
+                    tablica_trafien[1][0] = 0 //zeruje możliwości pójścia na góre ponieważ nie można już
                     if (sprawdzacz_wygranej())
                         setTimeout(IA_try_medium, 1000);
                 } else if (tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == true || tablica_gry_PLAYER[(tablica_trafien[4][1] - tablica_trafien[3][1])] == 'protected') {
@@ -1401,10 +1401,10 @@ function wektormaker(strzal) {
         }
     }
     //specjalne
-    if (tablica_gry_PLAYER[strzal - 20] == 'trafiony') {
+    if (tablica_gry_PLAYER[strzal - 20]!=undefinded && tablica_gry_PLAYER[strzal - 20] == 'trafiony') {
         tablica_trafien[0] = [0, 10]
     }
-    if (tablica_gry_PLAYER[strzal + 20] == 'trafiony') {
+    if (tablica_gry_PLAYER[strzal + 20]!=undefinded && tablica_gry_PLAYER[strzal + 20] == 'trafiony') {
         tablica_trafien[1] = [0, 10]
     }
     if (tablica_gry_PLAYER[strzal + 2] == 'trafiony' && (strzal + 2) % 10 != 0 || (strzal + 1) % 10 == 0) {
@@ -1417,6 +1417,8 @@ function wektormaker(strzal) {
 }
 //OP ia staff
 function IA_TRY_BOOSTED() {
+    console.log(tablica_trafien_pc_OPAI)
+    console.log(tablica_uzytkowa)
     if (sprawdzacz_wygranej()) {
         if (tablica_trafien_pc_OPAI.length == 0) {
             for (i = 0; i < 100; i++) {
@@ -1566,6 +1568,7 @@ function IA_TRY_BOOSTED() {
             //wektr staff 
         } else {    //TODO dodaj opcje tworzenia wektoru w tablicy , odbuguj , sprawdź czy działą itp etc no wiesz co zrobić
             var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
+         
             if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
                 selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
                 document.querySelector(selector).style.background = "red";
