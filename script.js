@@ -944,7 +944,7 @@ function czwormaszt_case_maker(przypadek, tablica, first_x, uzytkownik_czy_pc, p
             }
             break;
         case 3: // szukam w lewo 
-            if (tablica[first_x] != undefined && tablica[first_x - 1] != undefined && tablica[first_x - 2] != undefined && tablica[first_x - 3] != undefined && first_x % 10 != 0 && first_x % 10 != 1 && first_x % 10 != 2) { // sprawdzam czy 4 kolejne komórki są wolne TODO jak 3 4maszt nie działa to wpierdol tu first_x %10 !=3
+            if (tablica[first_x] != undefined && tablica[first_x - 1] != undefined && tablica[first_x - 2] != undefined && tablica[first_x - 3] != undefined && first_x % 10 != 0 && first_x % 10 != 1 && first_x % 10 != 2) { // sprawdzam czy 4 kolejne komórki są wolne TODO jak 3 4maszt nie działa to daj tu first_x %10 !=3
                 for (i = 0; i < 4; i++) {
                     tablica[first_x - i] = false;
                     rysownik(tablica_gry_KOMPUTER, plansza, first_x - i)
@@ -1401,10 +1401,10 @@ function wektormaker(strzal) {
         }
     }
     //specjalne
-    if (tablica_gry_PLAYER[strzal - 20]!=undefinded && tablica_gry_PLAYER[strzal - 20] == 'trafiony') {
+    if (tablica_gry_PLAYER[strzal - 20] == 'trafiony') {
         tablica_trafien[0] = [0, 10]
     }
-    if (tablica_gry_PLAYER[strzal + 20]!=undefinded && tablica_gry_PLAYER[strzal + 20] == 'trafiony') {
+    if (tablica_gry_PLAYER[strzal + 20] == 'trafiony') {
         tablica_trafien[1] = [0, 10]
     }
     if (tablica_gry_PLAYER[strzal + 2] == 'trafiony' && (strzal + 2) % 10 != 0 || (strzal + 1) % 10 == 0) {
@@ -1566,7 +1566,7 @@ function IA_TRY_BOOSTED() {
                 IA_TRY_BOOSTED()
             }
             //wektr staff 
-        } else {    //TODO dodaj opcje tworzenia wektoru w tablicy , odbuguj , sprawdź czy działą itp etc no wiesz co zrobić
+        } else { 
             var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
          
             if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie

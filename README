@@ -1,0 +1,31 @@
+Rachunek projekcikowy
+   (max. 3p) cz.1   -- całe bez bugów i wychodzenia + auto losowanei   
+		w obrębie całej planszy:
+		1p - rozdanie czterech jednomasztowców (nie mogą się wylosować w miejscu gdzie już jest => zawsze cztery)
+		lub 1.5p - rozdanie wszystkich statków tylko w poziomie
+		lub 3p - rozdanie wszystkich statków w losowych kierunkach (zawiera w sobie pkt. powyższy, nie trzeba rozdzielać)
+
+	(max. 3p) cz.2  // jest tak jak ma byc !! nie podświetli statku tam gdzie nie może najechac ale podświetli go na czerwono 
+		1p - zachowanie lewej strony (wybieranie statków)
+		1p - propozycja zajętego miejsca z prawej strony (z obrotem)
+		1p - zachowanie "akceptacji" wyboru (+ usunięcie z listy zatwierdzonego statku)		
+	(max. 2p) cz.3  -- jest jako pozom łatwy + ustawiłem dłuższy czas jeśli dobija w niektórych przypadkach dla lepszej iluzji grania na gracza
+		-- mówił Pan kiedyś że może pozwalać wypracowac przewagę gracz  albo komputer więc u mnie grane jest na przewagę jeśli komputer / gracz zbije coś to ma 2 ruch 
+        0.5p - strzelanie gracza (pudło/trafiony)
+		0.5p - strzelanie komputera (1s czas "myślenia", strzelanie bez powtórzeń)
+		0.5p - naprzemienność strzelań - cmp - ply - cmp - ply itd. (pilnowanie kolejności graczy)
+		0.5p - rozpoczęcie (klik buttona) + wygrana (info kto wygrał)   
+
+	(max. +1p) BONUS - najszybszy algorytm wygrania komputera z graczem
+		napisz algorytm bot'a tak by komputer:
+			0.5p (cała sekcja)  -- jest myślę że ok
+				- sprawdzał w jakim kierunku jest wsawiony trafiony okręt,
+				- dokańczał go (zatapiał),
+				- nie trafiał w pozostałe jeszcze nie trafiane pola w koło zatopionego okrętu
+			0.5p    -- brak
+				- bot "sieje" plansze w poszukiwaniu najdłuższego pozostałego do zatopienia statku 
+				sprawdzam obserwując czy komputer nie robi bezsensownego ruchu
+50485048    -- zrozumie Pan w grze :)
+
+
+Cały projekt wykonany samemu , odapalany na liveserverze :) ( bez live servera mogą występować sporadyczne problemy z rzeczami pokroju tło etc)
