@@ -1417,8 +1417,6 @@ function wektormaker(strzal) {
 }
 //OP ia staff
 function IA_TRY_BOOSTED() {
-    console.log(tablica_trafien_pc_OPAI)
-    console.log(tablica_uzytkowa)
     if (sprawdzacz_wygranej()) {
         if (tablica_trafien_pc_OPAI.length == 0) {
             for (i = 0; i < 100; i++) {
