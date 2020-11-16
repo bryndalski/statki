@@ -1417,8 +1417,6 @@ function wektormaker(strzal) {
 }
 //OP ia staff
 function IA_TRY_BOOSTED() {
-    console.log(tablica_trafien_pc_OPAI)
-    console.log(tablica_uzytkowa)
     if (sprawdzacz_wygranej()) {
         if (tablica_trafien_pc_OPAI.length == 0) {
             for (i = 0; i < 100; i++) {
@@ -1566,9 +1564,9 @@ function IA_TRY_BOOSTED() {
                 IA_TRY_BOOSTED()
             }
             //wektr staff 
-        } else { 
+        } else {
             var headshot = (Math.floor(Math.random() * (99 - 0 + 1)) + 0) + 1;//losuje randomowy index tablicy 
-         
+
             if (tablica_gry_PLAYER[headshot - 1] == false) {//nastepuje trafienie
                 selector = '#gamer_container div:nth-child(' + headshot + ')'                       //sprawdzam czy nie kliknięto na pusty fragment diva
                 document.querySelector(selector).style.background = "red";
